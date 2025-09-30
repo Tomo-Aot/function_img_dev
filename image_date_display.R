@@ -5,13 +5,13 @@
 library(magick)
 library(tidyverse)
 
+path = "./data/"
 
 image_date_display = 
   function(path) {
     # number of files
     len = length(dir(path = path))
-    files = dir(path = path, full.names = TRUE,
-                pattern = "JPG")
+    files = dir(path = path, full.names = TRUE)
     
     df = tibble(dir = files)
     
@@ -40,13 +40,22 @@ image_date_display =
     )
     
     # SAVE IMAGE
-    savefile = str_replace(files, ".JPG", "_label.JPG")
+    extensions = df |> 
+      mutate(basename = basename(dir)) |> 
+      separate(sep = "\\.", into = c("filename", "ext"), basename)
+    
+    savefile = str_replace(
+      files, 
+      pattern = paste0("\\.", extensions$ext), 
+      replacement = paste0("_label", "\\.", extensions$ext)
+    )
     
     for (i in 1:len) {
       image_write(image = img_annt[i], savefile[i])
     }
-}
+  }
 
-path = "./data/"
+
+
 image_date_display(path = path)
 
