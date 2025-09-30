@@ -9,11 +9,16 @@ path = "./data/"
 
 image_date_display = 
   function(path) {
-    # number of files
-    len = length(dir(path = path))
-    files = dir(path = path, full.names = TRUE)
+    
+    # loading file
+    allfiles = dir(path = path, full.names = TRUE, ignore.case = TRUE)
+    
+    # label付きのやつは重複しないように除外
+    files = allfiles[!grepl(pattern = "label", allfiles)]
     
     df = tibble(dir = files)
+    
+    len = length(files)
     
     # loading file information
     img_info = tibble(
@@ -54,8 +59,6 @@ image_date_display =
       image_write(image = img_annt[i], savefile[i])
     }
   }
-
-
 
 image_date_display(path = path)
 
