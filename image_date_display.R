@@ -30,8 +30,10 @@ image_date_display = function(path) {
   image_write(image = img_annt, path = savefile)
 }
 
+path = "./data/image_sample.JPG"
 
 image_date_display(path = path)
+
 
 
 
