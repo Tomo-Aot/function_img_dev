@@ -1,22 +1,11 @@
 # 2025-09-30
-# loading packages
-library(exifr)
-library(tidyverse)
-
-path = "./data/image_sample.JPG"
-
-info = read_exif(path)
-
-info$DateTimeOriginal |> 
-  as_datetime()
-
-file.info(path)
-
 # 画像ファイルから撮影日の情報を取得して、
 # 元の画像の右上に表示して保存する関数を作成
 
 image_date_display = function(path) {
+  # loading packages
   library(magick)
+  library(tidyverse)
   
   # loading file information
   info = file.info(path)
