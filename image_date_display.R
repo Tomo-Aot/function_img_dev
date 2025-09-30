@@ -8,18 +8,26 @@ library(tidyverse)
 
 image_date_display = 
   function(path) {
-    # loading file information
-    info = file.info(path)
-    rec_date = info$mtime |> 
-      as.Date()
-    
     # number of files
     len = length(dir(path = path))
-    files = dir(path = path, full.names = TRUE)
+    files = dir(path = path, full.names = TRUE,
+                pattern = "JPG")
+    
     df = tibble(dir = files)
     
+    # loading file information
+    img_info = tibble(
+      dir = dir(path = path, full.names = TRUE)
+    ) |> 
+      mutate(info = map(dir, file.info)) |> 
+      unnest(info)
+    
+    rec_date = img_info$mtime |> 
+      as.Date()
+    
+    
     # loading image file
-    img = image_read(path)
+    img = image_read(df$dir)
     
     img_annt = image_annotate(
       img, 
@@ -32,14 +40,13 @@ image_date_display =
     )
     
     # SAVE IMAGE
-    savefile = str_replace(path, ".JPG", "_label.JPG")
+    savefile = str_replace(files, ".JPG", "_label.JPG")
     
-    image_write(image = img_annt, path = savefile)
+    for (i in 1:len) {
+      image_write(image = img_annt[i], savefile[i])
+    }
 }
 
 path = "./data/"
-
-for (i in 1:len) {
-  image_date_display(path = df$dir)
-}
+image_date_display(path = path)
 
